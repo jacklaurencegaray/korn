@@ -32,10 +32,6 @@ variableBlock:
     BlockStarter (varDeclaration NEWLINE+)+ End NEWLINE
 ;
 
-boxElement:
-    boxname=Identifier RecordMemberOperator member=Identifier
-;
-
 boxDefinition:
     RecordKeyword boxname=Identifier variableBlock
 ;
@@ -81,7 +77,15 @@ whenStatement:
 ;
 
 ifStatement:
-    IfKeyword condition BlockStarter statement+ (ElseIfKeyword condition BlockStarter statement+)* (ElseKeyword BlockStarter statement+)? blockEnd
+    IfKeyword condition unEndedBlock (elseIfStatement)* (elseStatement)? blockEnd
+;
+
+elseIfStatement:
+    ElseIfKeyword condition unEndedBlock
+;
+
+elseStatement:
+    ElseKeyword unEndedBlock
 ;
 
 subprogramDefinition:
@@ -125,6 +129,10 @@ variable:
     name=Identifier
     | arrayElement
     | boxElement
+;
+
+boxElement:
+    boxname=Identifier Dot member=Identifier
 ;
 
 arrayElement:
@@ -172,7 +180,6 @@ andOrExpression:
 notExpression:
     operator=LogicalOperatorNot (booleanValue | variable)
 ;
-
 
 equalityExpression:
     (value | variable) (operator=EqualityOperator (value | variable))+
@@ -229,7 +236,7 @@ number:
 ;
 
 decimal:
-    wholenumber=DigitSequence RecordMemberOperator decimalvalue=DigitSequence
+    wholenumber=DigitSequence Dot decimalvalue=DigitSequence
 ;
 
 identifier:
@@ -239,6 +246,8 @@ identifier:
 dataType:
     DataType
 ;
+
+
 
 DataType:               'letter' | 'number' | 'decimal' | 'sentence' | 'boolean';
 Boolean:                'true' | 'false';
@@ -252,6 +261,7 @@ LogicalOperatorNot:     'not';
 TaskKeyword:            'task';
 StepKeyword:            'step';
 ArgumentOperator:       'with';
+Dot:                    '.';
 SubprogramInvoker:      'do';
 IfKeyword:              'if';
 ElseKeyword:            'else';
@@ -275,8 +285,6 @@ End:                    'end';
 DigitSequence:          Digit+;
 Digit:                  Zero | NonZeroDigit;
 NonZeroDigit:           [1-9];
-Dot:                    '.';
-RecordMemberOperator:   Dot;
 Identifier:             NonDigitCharacter CharacterSequence*;
 StringLiteral:          ('"' ( '\\' [\\"] | ~[\\"] )* '"') | ('\'' ( '\\' [\\"] | ~[\\"] )* '\'');
 Zero:                   [0];
