@@ -81,7 +81,7 @@ whenStatement:
 ;
 
 ifStatement:
-    IfKeyword condition BlockStarter statement+ (ElseIfKeyword condition BlockStarter statement+)* (ElseKeyword block)?
+    IfKeyword condition BlockStarter statement+ (ElseIfKeyword condition BlockStarter statement+)* (ElseKeyword BlockStarter statement+)? blockEnd
 ;
 
 subprogramDefinition:
